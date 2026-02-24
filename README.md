@@ -1,4 +1,4 @@
-# VisionAstra Hackathon Management System
+# VisionAstra  
 
 React + Tailwind frontend with Firebase-ready backend services.
 
