@@ -9,7 +9,8 @@ import AdminDashboardPage from "../pages/admin/Dashboard";
 import NotFoundPage from "../pages/shared/NotFound";
 
 function ProtectedRoute({ children, role }) {
-  const { user } = useAuth();
+  const { user, isAuthReady } = useAuth();
+  if (!isAuthReady) return null;
   if (!user) return <Navigate to={role === "admin" ? "/admin/login" : "/student/login"} replace />;
   if (user.role !== role) return <Navigate to="/" replace />;
   return children;

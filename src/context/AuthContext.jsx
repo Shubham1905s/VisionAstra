@@ -6,10 +6,12 @@ const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
+  const [isAuthReady, setIsAuthReady] = useState(false);
 
   useEffect(() => {
     mockDb.seedAdminIfMissing();
     setUser(mockDb.getCurrentUser());
+    setIsAuthReady(true);
   }, []);
 
   const value = useMemo(
@@ -35,8 +37,9 @@ export function AuthProvider({ children }) {
       refreshSession() {
         setUser(mockDb.getCurrentUser());
       },
+      isAuthReady,
     }),
-    [user],
+    [isAuthReady, user],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
