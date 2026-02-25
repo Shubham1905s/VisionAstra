@@ -32,7 +32,7 @@ npm run dev
 - R1 submission (PDF metadata), R2 submission (GitHub link)
 - Admin evaluation and editable marks
 - Profile marks visibility for students
-- Certificate generation and print/download view
+- Certificate generation and print/download view 
 - Admin metrics and marks verification table export (CSV)
 - Admin notification queue UI (for email integration)
 
