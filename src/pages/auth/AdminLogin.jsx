@@ -23,7 +23,7 @@ export default function AdminLoginPage() {
       setStatus(error.message);
     }
   }
-
+ 
   return (
     <form className="space-y-4 rounded-xl bg-white p-6 shadow-sm" onSubmit={handleSubmit}>
       <h2 className="text-xl font-bold text-brand-900">Admin Login</h2>
