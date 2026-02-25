@@ -11,6 +11,7 @@ export default function AuthLayout() {
             <Link className="text-brand-700 underline" to="/student/register">Student Register</Link>
             <Link className="text-brand-700 underline" to="/student/login">Student Login</Link>
             <Link className="text-brand-700 underline" to="/admin/login">Admin Login</Link>
+          
           </nav>
         </header>
         <Outlet />

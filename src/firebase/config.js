@@ -27,7 +27,7 @@ if (hasFirebaseConfig) {
   auth = getAuth(app);
   db = getFirestore(app);
   storage = getStorage(app);
-
+ 
   if (typeof window !== "undefined") {
     isSupported()
       .then((supported) => {
