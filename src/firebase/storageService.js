@@ -7,3 +7,4 @@ export async function uploadFile(path, file) {
   await uploadBytes(storageRef, file);
   return getDownloadURL(storageRef);
 }
+  
