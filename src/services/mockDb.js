@@ -359,7 +359,7 @@ export const mockDb = {
       team.memberIds.forEach((memberId) => {
         const user = db.users.find((u) => u.id === memberId);
         if (!user) return;
-
+ 
         const existing = db.certificates.find((c) => c.userId === user.id);
         const payload = {
           id: existing?.id || crypto.randomUUID(),
