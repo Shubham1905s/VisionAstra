@@ -19,7 +19,7 @@ export default function StudentDashboardPage() {
   const [message, setMessage] = useState("");
   const [state, setState] = useState({
     team: null,
-    users: [],
+    users: [], 
     joinRequests: [],
     openTeams: [],
     problems: [],
