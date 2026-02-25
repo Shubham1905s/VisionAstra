@@ -28,7 +28,7 @@ export default function StudentDashboardPage() {
     marks: null,
     certificate: null,
   });
-
+ 
   function reload() {
     const team = mockDb.getTeamByUser(user.id);
     const users = mockDb.getUsers();
