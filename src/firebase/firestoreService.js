@@ -10,7 +10,7 @@ export async function addDocument(path, payload) {
   if (!hasFirebaseConfig) return null;
   return addDoc(collection(db, path), payload);
 }
-
+ 
 export async function listDocuments(path) {
   if (!hasFirebaseConfig) return [];
   const snap = await getDocs(collection(db, path));
