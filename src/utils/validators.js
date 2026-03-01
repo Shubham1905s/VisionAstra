@@ -12,10 +12,13 @@ export function generateOtp() {
   return `${Math.floor(100000 + Math.random() * 900000)}`;
 }
 
-export function createCaptcha() {
-  const a = Math.floor(Math.random() * 9) + 1;
-  const b = Math.floor(Math.random() * 9) + 1;
-  return { question: `${a} + ${b} = ?`, answer: `${a + b}` };
+export function createCaptcha(length = 6) {
+  const pool = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789@#$%&*';
+  let text = '';
+  for (let i = 0; i < length; i++) {
+    text += pool[Math.floor(Math.random() * pool.length)];
+  }
+  return { text };
 }
 
 export function generateTeamId(prefix) {

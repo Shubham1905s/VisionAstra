@@ -1,10 +1,11 @@
-import { useMemo, useState } from "react";
+import { useCallback, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Input from "../../components/common/Input";
 import Button from "../../components/common/Button";
+import Captcha from "../../components/common/Captcha";
 import { useAuth } from "../../context/AuthContext";
 import { mockDb } from "../../services/mockDb";
-import { createCaptcha, isCollegeEmail, validatePassword } from "../../utils/validators";
+import { isCollegeEmail, validatePassword } from "../../utils/validators";
 
 export default function StudentRegisterPage() {
   const { sendOtp, registerStudent } = useAuth();
@@ -18,10 +19,11 @@ export default function StudentRegisterPage() {
     otp: "",
     captchaAnswer: "",
   });
+  const [captchaText, setCaptchaText] = useState("");
   const [status, setStatus] = useState("");
   const [otpPreview, setOtpPreview] = useState("");
 
-  const captcha = useMemo(() => createCaptcha(), []);
+  const handleCaptchaChange = useCallback((text) => setCaptchaText(text), []);
 
   function onChange(key, value) {
     setForm((prev) => ({ ...prev, [key]: value }));
@@ -44,7 +46,7 @@ export default function StudentRegisterPage() {
     if (!isCollegeEmail(form.email)) return setStatus("Use a valid college email ID.");
     if (!validatePassword(form.password)) return setStatus("Password must be at least 8 characters.");
     if (form.password !== form.confirmPassword) return setStatus("Passwords do not match.");
-    if (form.captchaAnswer !== captcha.answer) return setStatus("Captcha answer is incorrect.");
+    if (form.captchaAnswer !== captchaText) return setStatus("Captcha answer is incorrect.");
     if (!mockDb.verifyOtp(form.email, form.otp)) return setStatus("OTP is invalid.");
 
     try {
@@ -74,12 +76,15 @@ export default function StudentRegisterPage() {
           <Button type="button" className="w-full" onClick={handleSendOtp}>Send OTP</Button>
         </div>
         <Input label="OTP" value={form.otp} onChange={(e) => onChange("otp", e.target.value)} required />
-        <Input label={`Captcha: ${captcha.question}`} value={form.captchaAnswer} onChange={(e) => onChange("captchaAnswer", e.target.value)} required />
       </div>
+      <Captcha
+        value={form.captchaAnswer}
+        onChange={(e) => onChange("captchaAnswer", e.target.value)}
+        onCaptchaChange={handleCaptchaChange}
+      />
       {otpPreview && <p className="text-sm text-blue-700">Dev OTP Preview: {otpPreview}</p>}
       {status && <p className="text-sm text-rose-700">{status}</p>}
       <Button type="submit">Create Account</Button>
     </form>
   );
 }
- 
