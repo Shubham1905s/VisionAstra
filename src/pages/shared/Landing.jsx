@@ -15,7 +15,7 @@ export default function LandingPage() {
             VisionAstra 2026
           </p>
           <h1 className="mt-3 text-4xl font-black leading-tight text-slate-900 md:text-5xl">
-            One portal for team creation, submissions, and results.
+            A centralized platform for team formation, submissions, and result management.
           </h1>
           <p className="mt-4 max-w-2xl text-sm text-slate-700 md:text-base">
             Create leader accounts, generate shareable team IDs, and manage the full hackathon flow across students and admins.
