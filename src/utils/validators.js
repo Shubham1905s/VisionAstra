@@ -26,6 +26,10 @@ export function generateTeamId(prefix) {
   return `${prefix}${random}`;
 }
 
+export function normalizeTeamId(value = "") {
+  return value.trim().toUpperCase();
+}
+
 export function calculateTotalMarks(round1 = 0, round2 = 0) {
   return Number(round1 || 0) + Number(round2 || 0);
 }

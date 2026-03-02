@@ -7,6 +7,8 @@ import AdminLoginPage from "../pages/auth/AdminLogin";
 import StudentDashboardPage from "../pages/student/Dashboard";
 import AdminDashboardPage from "../pages/admin/Dashboard";
 import NotFoundPage from "../pages/shared/NotFound";
+import LandingPage from "../pages/shared/Landing";
+import TeamJoinPage from "../pages/shared/TeamJoin";
 
 function ProtectedRoute({ children, role }) {
   const { user, isAuthReady } = useAuth();
@@ -19,7 +21,8 @@ function ProtectedRoute({ children, role }) {
 export default function AppRouter() {
   return (
     <Routes>
-      <Route path="/" element={<Navigate to="/student/login" replace />} />
+      <Route path="/" element={<LandingPage />} />
+      <Route path="/join/:teamId" element={<TeamJoinPage />} />
       <Route element={<AuthLayout />}>
         <Route path="/student/register" element={<StudentRegisterPage />} />
         <Route path="/student/login" element={<StudentLoginPage />} />

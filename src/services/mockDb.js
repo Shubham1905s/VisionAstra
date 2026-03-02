@@ -4,7 +4,7 @@ import {
   MIN_TEAM_SIZE,
   TEAM_ID_PREFIX,
 } from "../utils/constants";
-import { calculateTotalMarks, generateTeamId } from "../utils/validators";
+import { calculateTotalMarks, generateTeamId, normalizeTeamId } from "../utils/validators";
 
 const DB_KEY = "visionastra_db_v1";
 const SESSION_KEY = "visionastra_session";
@@ -196,7 +196,8 @@ export const mockDb = {
 
   getTeamById(teamIdCode) {
     const db = readDb();
-    return db.teams.find((t) => t.teamId === teamIdCode) || null;
+    const normalizedCode = normalizeTeamId(teamIdCode);
+    return db.teams.find((t) => normalizeTeamId(t.teamId) === normalizedCode) || null;
   },
 
   listOpenTeams() {
@@ -206,7 +207,8 @@ export const mockDb = {
 
   requestToJoin(teamIdCode, studentId) {
     const db = readDb();
-    const team = db.teams.find((t) => t.teamId === teamIdCode);
+    const normalizedCode = normalizeTeamId(teamIdCode);
+    const team = db.teams.find((t) => normalizeTeamId(t.teamId) === normalizedCode);
     const student = db.users.find((u) => u.id === studentId);
     if (!team || !student) throw new Error("Team or student not found.");
     if (student.teamId) throw new Error("You are already in a team.");

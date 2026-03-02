@@ -7,6 +7,7 @@ import SectionCard from "../../components/common/SectionCard";
 import { useAuth } from "../../context/AuthContext";
 import { mockDb } from "../../services/mockDb";
 import { ROUNDS } from "../../utils/constants";
+import { normalizeTeamId } from "../../utils/validators";
 
 function downloadCsv(rows) {
   if (!rows.length) return;
@@ -97,7 +98,8 @@ export default function AdminDashboardPage() {
 
   function assignProblem(e) {
     e.preventDefault();
-    const team = state.teams.find((t) => t.teamId === assignForm.teamId);
+    const normalizedTeamId = normalizeTeamId(assignForm.teamId);
+    const team = state.teams.find((t) => normalizeTeamId(t.teamId) === normalizedTeamId);
     if (!team) return setMessage("Team ID not found.");
     mockDb.assignProblemToTeam(team.id, assignForm.problemId, "Assigned");
     mockDb.createNotification({

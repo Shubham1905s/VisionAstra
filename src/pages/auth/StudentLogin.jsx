@@ -1,5 +1,5 @@
 import { useCallback, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import Input from "../../components/common/Input";
 import Button from "../../components/common/Button";
 import Captcha from "../../components/common/Captcha";
@@ -8,6 +8,7 @@ import { useAuth } from "../../context/AuthContext";
 export default function StudentLoginPage() {
   const { login } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const [form, setForm] = useState({ email: "", password: "", captchaAnswer: "" });
   const [captchaText, setCaptchaText] = useState("");
   const [status, setStatus] = useState("");
@@ -21,7 +22,8 @@ export default function StudentLoginPage() {
 
     try {
       await login({ email: form.email, password: form.password, role: "student" });
-      navigate("/student/dashboard");
+      const query = location.search || "";
+      navigate(`/student/dashboard${query}`);
     } catch (error) {
       setStatus(error.message);
     }

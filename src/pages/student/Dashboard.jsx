@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import Badge from "../../components/common/Badge";
 import Button from "../../components/common/Button";
 import Input from "../../components/common/Input";
@@ -7,12 +7,17 @@ import SectionCard from "../../components/common/SectionCard";
 import { useAuth } from "../../context/AuthContext";
 import { mockDb } from "../../services/mockDb";
 import { MIN_TEAM_SIZE, ROUNDS } from "../../utils/constants";
+import { normalizeTeamId } from "../../utils/validators";
 
 export default function StudentDashboardPage() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const [teamName, setTeamName] = useState("");
-  const [joinTeamId, setJoinTeamId] = useState("");
+  const [joinTeamId, setJoinTeamId] = useState(() => {
+    const queryId = new URLSearchParams(window.location.search).get("teamId") || "";
+    return normalizeTeamId(queryId);
+  });
   const [openProblemChoice, setOpenProblemChoice] = useState("");
   const [r1Payload, setR1Payload] = useState({ fileName: "", fileUrl: "" });
   const [r2Payload, setR2Payload] = useState({ github: "", description: "" });
@@ -52,6 +57,14 @@ export default function StudentDashboardPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  useEffect(() => {
+    const queryId = new URLSearchParams(location.search).get("teamId") || "";
+    const normalizedId = normalizeTeamId(queryId);
+    if (normalizedId && !state.team) {
+      setJoinTeamId(normalizedId);
+    }
+  }, [location.search, state.team]);
+
   const teamMembers = useMemo(() => {
     if (!state.team) return [];
     return state.team.memberIds
@@ -71,8 +84,8 @@ export default function StudentDashboardPage() {
   async function handleCreateTeam(e) {
     e.preventDefault();
     try {
-      mockDb.createTeam(user.id, teamName);
-      setMessage("Team created.");
+      const team = mockDb.createTeam(user.id, teamName.trim());
+      setMessage(`Team created. Share Team ID: ${team.teamId}`);
       setTeamName("");
       reload();
     } catch (error) {
@@ -80,8 +93,13 @@ export default function StudentDashboardPage() {
     }
   }
 
-  async function handleJoinRequest(teamId) {
+  async function handleJoinRequest(teamIdInput) {
     try {
+      const teamId = normalizeTeamId(teamIdInput);
+      if (!teamId) {
+        setMessage("Enter a valid Team ID.");
+        return;
+      }
       mockDb.requestToJoin(teamId, user.id);
       setMessage("Join request sent.");
       setJoinTeamId("");
@@ -154,6 +172,15 @@ export default function StudentDashboardPage() {
     navigate("/student/login");
   }
 
+  async function copyToClipboard(value, successMessage) {
+    try {
+      await navigator.clipboard.writeText(value);
+      setMessage(successMessage);
+    } catch {
+      setMessage("Copy failed. Please copy manually.");
+    }
+  }
+
   return (
     <main className="min-h-screen bg-slate-100 p-5">
       <div className="mx-auto max-w-6xl space-y-4">
@@ -180,7 +207,12 @@ export default function StudentDashboardPage() {
               <div>
                 <h4 className="mb-2 font-semibold">Join using Team ID</h4>
                 <div className="flex gap-2">
-                  <input className="w-full rounded-lg border border-slate-300 px-3 py-2" value={joinTeamId} onChange={(e) => setJoinTeamId(e.target.value)} placeholder="VA2026XXXX" />
+                  <input
+                    className="w-full rounded-lg border border-slate-300 px-3 py-2"
+                    value={joinTeamId}
+                    onChange={(e) => setJoinTeamId(normalizeTeamId(e.target.value))}
+                    placeholder="VA2026XXXX"
+                  />
                   <Button type="button" onClick={() => handleJoinRequest(joinTeamId)}>Send Request</Button>
                 </div>
               </div>
@@ -209,7 +241,28 @@ export default function StudentDashboardPage() {
               <div className="grid gap-3 md:grid-cols-2">
                 <div className="space-y-2 text-sm">
                   <p><strong>Team Name:</strong> {state.team.teamName}</p>
-                  <p><strong>Team ID:</strong> {state.team.teamId}</p>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <p><strong>Team ID:</strong> {state.team.teamId}</p>
+                    <Button
+                      type="button"
+                      className="px-3 py-1 text-xs"
+                      onClick={() => copyToClipboard(state.team.teamId, "Team ID copied.")}
+                    >
+                      Copy ID
+                    </Button>
+                    <Button
+                      type="button"
+                      className="bg-slate-700 px-3 py-1 text-xs hover:bg-slate-900"
+                      onClick={() =>
+                        copyToClipboard(
+                          `${window.location.origin}/join/${state.team.teamId}`,
+                          "Join link copied.",
+                        )
+                      }
+                    >
+                      Copy Join Link
+                    </Button>
+                  </div>
                   <p><strong>Members:</strong> {teamMembers.length} (min 2, max 4)</p>
                   <p><strong>Leader:</strong> {teamMembers.find((m) => m.id === state.team.leaderId)?.fullName}</p>
                 </div>
