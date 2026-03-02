@@ -27,6 +27,7 @@ export function generateTeamId(prefix) {
 }
 
 export function normalizeTeamId(value = "") {
+  if (!value) return "";
   return value.trim().toUpperCase();
 }
 
